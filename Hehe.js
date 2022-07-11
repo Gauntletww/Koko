@@ -53,38 +53,7 @@ bot.telegram.sendMessage(ctx.chat.id, `<pre>${data.join('\r\n')}</pre>`,{parse_m
 	
 })
 })
-bot.command('getmarketcap',(ctx) => {
-var array;
-	const msg = ctx.update.message.text.split('').slice(14).join('');
-	
-	  if(msg === ''){
-     ctx.telegram.sendMessage(ctx.chat.id,"Invalid format")
-	    ctx.telegram.sendMessage(ctx.chat.id,`Use  [ /getmarketcap {crypto_name} ] to get 24hr market cap  of crypto-coin.`)
-	
-	 }
-	 else{
-	 	array = config.filter(function(value) {
-	 	                return value.name === msg
-	              })
-	 	  if(_.isEmpty(array)){
-	 	    bot.telegram.sendMessage(ctx.chat.id,'Please ensure the name of coin/token is correct.')
-	 	    bot.telegram.sendMessage(ctx.chat.id,'Send /tutorial command to get help!')
-	 	}
-	 	else{
-	 		axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${array[0].id}&vs_currencies=usd&include_market_cap=true`).then(res => {
-	 			bot.telegram.sendMessage(ctx.chat.id,
-   `The 24hr market cap of ${msg} is ${parseInt(Object.values(res.data)[0].usd_market_cap).toFixed(3)}$ according to coingecko!`
-	 			)
-	 		}).catch(e => {
-	 		console.log(e)
-	 			bot.telegram.sendMessage(ctx.chat.id,
-	 			"Sorry some error occured in our server,please try again!⚡"
-	 			     )
-	 		})
-	 	}
-	 }
-	 
-})
+
 bot.launch()
  
 
