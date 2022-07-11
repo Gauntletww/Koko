@@ -1,7 +1,7 @@
 const { Telegraf } = require('telegraf')
 const axios = require('axios')
 var _ = require('lodash');
-const config = require('./coin.json');
+var config = require('./coin.json');
 
 const bot = new Telegraf('5444942394:AAGY_q24ufraump2EAlm2Ml8fXgiEE1Lsxo')
 bot.start((ctx) => ctx.reply('Welcome to our coingecko price bot'))
@@ -53,7 +53,67 @@ bot.telegram.sendMessage(ctx.chat.id, `<pre>${data.join('\r\n')}</pre>`,{parse_m
 	
 })
 })
+bot.command('getmarketcap',(ctx) => {
 
+var array;
+
+	const msg = ctx.update.message.text.split('').slice(14).join('');	
+
+	  if(msg === ''){
+
+     ctx.telegram.sendMessage(ctx.chat.id,"Invalid format")
+
+	    ctx.telegram.sendMessage(ctx.chat.id,`Use  [ /getmarketcap {crypto_name} ] to get 24hr market cap  of crypto-coin.`)
+
+	
+
+	 }
+
+	 else{
+
+	 	array = config.filter(function(value) {
+
+	 	                return value.name === msg
+
+	              })
+
+	 	  if(_.isEmpty(array)){
+
+	 	    bot.telegram.sendMessage(ctx.chat.id,'Please ensure the name of coin/token is correct.')
+
+	 	    bot.telegram.sendMessage(ctx.chat.id,'Send /tutorial command to get help!')
+
+	 	}
+
+	 	else{
+
+	 		axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${array[0].id}&vs_currencies=usd&include_market_cap=true`).then(res => {
+
+	 			bot.telegram.sendMessage(ctx.chat.id,
+
+   `The 24hr market cap of ${msg} is ${Object.values(res.data)[0].usd_market_cap}$ according to coingecko!`
+
+	 			)
+
+	 		}).catch(eok => {
+
+	 		console.log(eok)
+
+	 			bot.telegram.sendMessage(ctx.chat.id,
+
+	 			"Sorry some error occured in our server,please try again!⚡"
+
+	 			     )
+
+	 		})
+
+	 	}
+
+	 }
+
+	 
+
+})
 bot.launch()
  
 
